@@ -11,7 +11,6 @@ FROM alpine:3.16.2
 
 RUN apk add --no-cache tzdata
 
-COPY ./cache.json /app/cache.json
 COPY --from=builder /app/main /app/main
 
 WORKDIR /app

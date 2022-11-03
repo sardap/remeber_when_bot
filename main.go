@@ -64,9 +64,11 @@ type MessageCache struct {
 	Channels map[string][]MessageArchive
 }
 
+var cacheFileName = "data/cache.json"
+
 func loadCache() MessageCache {
 	var cache MessageCache
-	data, _ := os.ReadFile("cache.json")
+	data, _ := os.ReadFile(cacheFileName)
 	json.Unmarshal(data, &cache)
 	if cache.Channels == nil {
 		cache.Channels = map[string][]MessageArchive{}
@@ -115,7 +117,7 @@ func createCache(s *discordgo.Session) {
 	fmt.Printf("Done updating cache writing to file\n")
 	{
 		data, _ := json.Marshal(cache)
-		os.WriteFile("cache.json", data, 0777)
+		os.WriteFile(cacheFileName, data, 0777)
 	}
 	fmt.Printf("Done Writing cache to file\n")
 }
@@ -158,7 +160,7 @@ func rememberWhen(s *discordgo.Session) {
 
 	content := fmt.Sprintf(
 		"Remember when <@%s> said \"%s\" on %s at %s in %s\n",
-		message.Author, strings.ReplaceAll(message.Content, "\n", " "),
+		message.Author.ID, strings.ReplaceAll(message.Content, "\n", " "),
 		message.Timestamp.In(tz).Format("Mon, 02 Jan 2006"),
 		message.Timestamp.In(tz).Format("15:04:05"),
 		strings.ReplaceAll(channel.Name, "\n", ""),
@@ -169,7 +171,7 @@ func rememberWhen(s *discordgo.Session) {
 }
 
 func rememberWhenWorker(s *discordgo.Session) {
-	nextTimeFileName := "next_time.txt"
+	nextTimeFileName := "data/next_time.txt"
 	for {
 		data, _ := os.ReadFile(nextTimeFileName)
 		if len(data) > 0 {
