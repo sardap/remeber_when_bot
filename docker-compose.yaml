@@ -1,0 +1,8 @@
+version: '3'
+services:
+  remeber_when:
+    container_name: remeber_when
+    build: .
+    env_file: 
+      - '.env'
+    restart: always
